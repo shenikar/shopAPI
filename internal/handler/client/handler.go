@@ -1,19 +1,19 @@
 package client
 
 import (
-	"shopApi/internal/repository"
+	service "shopApi/internal/service/client"
 
 	"github.com/go-playground/validator/v10"
 )
 
 type ClientHandler struct {
-	Repo      *repository.ClientRepository
+	Service   *service.ClientService
 	Validator *validator.Validate
 }
 
-func NewClientHandler(repo *repository.ClientRepository, validator *validator.Validate) *ClientHandler {
+func NewClientHandler(service *service.ClientService, validator *validator.Validate) *ClientHandler {
 	return &ClientHandler{
-		Repo:      repo,
+		Service:   service,
 		Validator: validator,
 	}
 }

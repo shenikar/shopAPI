@@ -1,6 +1,8 @@
 package client
 
 import (
+	"database/sql"
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,9 +17,13 @@ func (h *ClientHandler) DeleteClient(c *gin.Context) {
 		return
 	}
 
-	err = h.Repo.DeleteClient(c.Request.Context(), id)
+	err = h.Service.DeleteClient(c.Request.Context(), id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete client"})
+		if errors.Is(err, sql.ErrNoRows) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Client not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete client"})
+		}
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Client deleted successfully"})

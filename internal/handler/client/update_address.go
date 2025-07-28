@@ -2,9 +2,9 @@ package client
 
 import (
 	"database/sql"
+	"errors"
 	"net/http"
 	"shopApi/internal/dto"
-	"shopApi/internal/mapper"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -32,16 +32,16 @@ func (h *ClientHandler) UpdateAddress(c *gin.Context) {
 		return
 	}
 
-	client, address, err := h.Repo.UpdateAddress(c.Request.Context(), clientID, req)
+	client, err := h.Service.UpdateAddress(c.Request.Context(), clientID, req)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			c.JSON(http.StatusNotFound, gin.H{"error": "client not found"})
-			return
+		if errors.Is(err, sql.ErrNoRows) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Client not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update client address"})
 		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update address", "details": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, mapper.ToClientResponseDTO(client, address))
+	c.JSON(http.StatusOK, client)
 
 }

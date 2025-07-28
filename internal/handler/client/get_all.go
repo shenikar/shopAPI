@@ -2,8 +2,6 @@ package client
 
 import (
 	"net/http"
-	"shopApi/internal/dto"
-	"shopApi/internal/mapper"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -31,16 +29,11 @@ func (h *ClientHandler) GetAllClients(c *gin.Context) {
 		offset = &o
 	}
 
-	clientsWithAddress, err := h.Repo.GetAllClient(c.Request.Context(), limit, offset)
+	clients, err := h.Service.GetAllClient(c.Request.Context(), limit, offset)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch clients"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch clients"})
 		return
 	}
 
-	var response []dto.ClientResponseDTO
-	for _, item := range clientsWithAddress {
-		response = append(response, mapper.ToClientResponseDTO(item.Client, item.Address))
-	}
-	c.JSON(http.StatusOK, response)
-
+	c.JSON(http.StatusOK, clients)
 }
