@@ -1,7 +1,7 @@
 package client
 
 import (
-	service "shopApi/internal/service/client"
+	service "shopApi/internal/service"
 
 	"github.com/go-playground/validator/v10"
 )
