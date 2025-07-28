@@ -3,7 +3,6 @@ package supplier
 import (
 	"database/sql"
 	"net/http"
-	"shopApi/internal/mapper"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -16,7 +15,7 @@ func (h *SupplierHandler) GetSupplierByID(c *gin.Context) {
 		return
 	}
 
-	supplier, err := h.Repo.GetSupplierByID(c.Request.Context(), id)
+	supplier, err := h.Service.GetSupplierByID(c.Request.Context(), id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			c.JSON(http.StatusNotFound, gin.H{"error": "supplier not found"})
@@ -25,5 +24,5 @@ func (h *SupplierHandler) GetSupplierByID(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch supplier"})
 		return
 	}
-	c.JSON(http.StatusOK, mapper.ToSupplierResponseDTO(supplier))
+	c.JSON(http.StatusOK, supplier)
 }
