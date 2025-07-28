@@ -1,19 +1,19 @@
 package product
 
 import (
-	"shopApi/internal/repository"
+	service "shopApi/internal/service"
 
 	"github.com/go-playground/validator/v10"
 )
 
 type ProductHandler struct {
-	Repo      *repository.ProductRepository
+	Service   *service.ProductService
 	Validator *validator.Validate
 }
 
-func NewProductHandler(repo *repository.ProductRepository, validator *validator.Validate) *ProductHandler {
+func NewProductHandler(service *service.ProductService, validator *validator.Validate) *ProductHandler {
 	return &ProductHandler{
-		Repo:      repo,
+		Service:   service,
 		Validator: validator,
 	}
 }

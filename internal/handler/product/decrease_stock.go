@@ -3,7 +3,6 @@ package product
 import (
 	"database/sql"
 	"net/http"
-	"shopApi/internal/mapper"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -31,7 +30,7 @@ func (h *ProductHandler) DecreaseStock(c *gin.Context) {
 		return
 	}
 
-	err = h.Repo.DecreaseStock(c.Request.Context(), productID, req.Quantity)
+	err = h.Service.DecreaseStock(c.Request.Context(), productID, req.Quantity)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			c.JSON(http.StatusNotFound, gin.H{"error": "not enough stock or product not found"})
@@ -42,11 +41,11 @@ func (h *ProductHandler) DecreaseStock(c *gin.Context) {
 	}
 
 	// Получаем обновлённый товар
-	product, err := h.Repo.GetProductByID(c.Request.Context(), productID)
+	product, err := h.Service.GetProductByID(c.Request.Context(), productID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch updated product"})
 		return
 	}
 
-	c.JSON(http.StatusOK, mapper.ToProductResponseDTO(product))
+	c.JSON(http.StatusOK, product)
 }

@@ -14,7 +14,7 @@ func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid product ID"})
 		return
 	}
-	err = h.Repo.Delete(c.Request.Context(), id)
+	err = h.Service.DeleteProduct(c.Request.Context(), id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete product"})
 		return
