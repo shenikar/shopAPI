@@ -1,7 +1,7 @@
 package dto
 
 type ImageUploadDTO struct {
-	ImageDate []byte `json:"image" validate:"required"`
+	ImageData []byte `json:"image" validate:"required"`
 	ProductID string `json:"product_id" validate:"required,uuid"`
 }
 
