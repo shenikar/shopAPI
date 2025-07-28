@@ -11,7 +11,7 @@ import (
 	"shopApi/internal/handler/supplier"
 	"shopApi/internal/repository"
 	"shopApi/internal/router"
-	service "shopApi/internal/service/client"
+	service "shopApi/internal/service"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -31,7 +31,7 @@ func main() {
 	v := validator.New()
 
 	clientRepo := repository.NewClientRepository(db)
-	clientService := service.NewClientService(*clientRepo, v)
+	clientService := service.NewClientService(*clientRepo)
 	productRepo := repository.NewProductRepository(db)
 	supplierRepo := repository.NewSupplierRepository(db)
 	imageRepo := repository.NewImageRepository(db)
