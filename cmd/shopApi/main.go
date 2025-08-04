@@ -31,15 +31,21 @@ func main() {
 	v := validator.New()
 
 	clientRepo := repository.NewClientRepository(db)
-	clientService := service.NewClientService(*clientRepo)
+	clientService := service.NewClientService(clientRepo)
+
 	productRepo := repository.NewProductRepository(db)
+	productService := service.NewProductService(productRepo)
+
 	supplierRepo := repository.NewSupplierRepository(db)
+	supplierService := service.NewSupplierService(supplierRepo)
+
 	imageRepo := repository.NewImageRepository(db)
+	imageService := service.NewImageService(imageRepo)
 
 	clientHandler := client.NewClientHandler(clientService, v)
-	productHandler := product.NewProductHandler(productRepo, v)
-	supplierHandler := supplier.NewSupplierHandler(supplierRepo, v)
-	imageHandler := image.NewImageHandler(imageRepo, v)
+	productHandler := product.NewProductHandler(productService, v)
+	supplierHandler := supplier.NewSupplierHandler(supplierService, v)
+	imageHandler := image.NewImageHandler(imageService, v)
 
 	h := &router.Handlers{
 		ClientHandler:   clientHandler,
