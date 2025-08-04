@@ -26,10 +26,9 @@ func (h *ImageHandler) UpdateImage(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	err = h.Repo.UpdateImage(c.Request.Context(), imageID, req.ImageDate)
+	err = h.Service.UpdateImage(c.Request.Context(), imageID, req.ImageData)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "update failed"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 

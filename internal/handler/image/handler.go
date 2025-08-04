@@ -1,19 +1,19 @@
 package image
 
 import (
-	"shopApi/internal/repository"
+	"shopApi/internal/service"
 
 	"github.com/go-playground/validator/v10"
 )
 
 type ImageHandler struct {
-	Repo      *repository.ImageRepository
+	Service   *service.ImageService
 	Validator *validator.Validate
 }
 
-func NewImageHandler(repo *repository.ImageRepository, validator *validator.Validate) *ImageHandler {
+func NewImageHandler(service *service.ImageService, validator *validator.Validate) *ImageHandler {
 	return &ImageHandler{
-		Repo:      repo,
+		Service:   service,
 		Validator: validator,
 	}
 }

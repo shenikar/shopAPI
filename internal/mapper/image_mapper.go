@@ -7,10 +7,10 @@ import (
 	"github.com/google/uuid"
 )
 
-func ToImageEntity(dto dto.ImageUploadDTO, productID uuid.UUID) (models.Image, error) {
+func ToImageEntity(dto dto.ImageUploadDTO) (models.Image, error) {
 	return models.Image{
 		ID:    uuid.New(),
-		Image: dto.ImageDate,
+		Image: dto.ImageData,
 	}, nil
 }
 

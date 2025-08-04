@@ -21,12 +21,12 @@ func NewImageRepository(db *sqlx.DB) *ImageRepository {
 
 // CreateImage создает новую запись изображения в базе данных
 func (r *ImageRepository) CreateImage(ctx context.Context, image *models.Image) error {
-	query := `INSERT INTO images (id, image, product_id) VALUES (:id, :image, :product_id)`
+	query := `INSERT INTO images (id, image) VALUES (:id, :image)`
 	_, err := r.db.NamedExecContext(ctx, query, image)
 	return err
 }
 
-// UpdateImage обновляет изображение по ID
+// UpdateImage обновление изображения по ID
 func (r *ImageRepository) UpdateImage(ctx context.Context, id uuid.UUID, newImage []byte) error {
 	query := `UPDATE images SET image = $1 WHERE id = $2`
 	res, err := r.db.ExecContext(ctx, query, newImage, id)
@@ -59,13 +59,29 @@ func (r *ImageRepository) DeleteImage(ctx context.Context, id uuid.UUID) error {
 	return err
 }
 
-// GetByProductID получает все изображения по ID товара
-func (r *ImageRepository) GetByProductID(ctx context.Context, productID uuid.UUID) ([]models.Image, error) {
-	var images []models.Image
-	query := `SELECT * FROM images WHERE product_id = $1`
-	err := r.db.SelectContext(ctx, &images, query, productID)
+// GetByProductID Получение изображения по ID товара
+func (r *ImageRepository) GetByProductID(ctx context.Context, productID uuid.UUID) (*models.Image, error) {
+	var image models.Image
+	query := `SELECT i.* FROM images i
+			 JOIN product p ON p.image_id = i.id WHERE p.id = $1
+			 `
+	err := r.db.GetContext(ctx, &image, query, productID)
 	if err != nil {
 		return nil, err
 	}
-	return images, nil
+	return &image, nil
+}
+
+// UpdateProductImageID обновляет поле image_id у товара
+func (r *ImageRepository) UpdateProductImageID(ctx context.Context, productID, imageID uuid.UUID) error {
+	query := `UPDATE product SET image_id = $1 WHERE id = $2`
+	_, err := r.db.ExecContext(ctx, query, imageID, productID)
+	return err
+}
+
+// ClearProductImageIDByImageID очищает ссылку image_id у товаров, которые ссылаются на данное изображение
+func (r *ImageRepository) ClearProductImageIDByImageID(ctx context.Context, imageID uuid.UUID) error {
+	query := `UPDATE product SET image_id = NULL WHERE image_id = $1`
+	_, err := r.db.ExecContext(ctx, query, imageID)
+	return err
 }

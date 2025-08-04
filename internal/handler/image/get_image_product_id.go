@@ -2,24 +2,25 @@ package image
 
 import (
 	"net/http"
-	"shopApi/internal/mapper"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
 func (h *ImageHandler) GetImageByProductID(c *gin.Context) {
-	productID, err := uuid.Parse(c.Param("product_id"))
+	idStr := c.Param("product_id")
+	productID, err := uuid.Parse(idStr)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid product id"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid product ID"})
 		return
 	}
 
-	image, err := h.Repo.GetByProductID(c.Request.Context(), productID)
+	image, err := h.Service.GetImageByProductID(c.Request.Context(), productID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "image not found"})
 		return
 	}
 
-	c.JSON(http.StatusOK, mapper.ToImageResponseDTO(*image))
+	c.Header("Content-Disposition", "attachment; filename="+image.ID.String()+".bin")
+	c.Data(http.StatusOK, "application/octet-stream", image.Image)
 }

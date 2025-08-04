@@ -14,9 +14,9 @@ func (h *ImageHandler) DeleteImage(c *gin.Context) {
 		return
 	}
 
-	err = h.Repo.DeleteImage(c.Request.Context(), imageID)
+	err = h.Service.DeleteImage(c.Request.Context(), imageID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "deletion failed"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
