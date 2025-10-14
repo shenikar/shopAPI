@@ -7,6 +7,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// CreateProduct
+// @Summary      Create a new product
+// @Description  Adds a new product to the store
+// @Tags         products
+// @Accept       json
+// @Produce      json
+// @Param        product  body      dto.CreateProductDTO  true  "Product info"
+// @Success      201      {object}  dto.ProductResponseDTO "Successfully created"
+// @Failure      400      {object}  map[string]string "Invalid request or validation failed"
+// @Failure      500      {object}  map[string]string "Failed to create product"
+// @Router       /api/v1/products [post]
 func (h *ProductHandler) CreateProduct(c *gin.Context) {
 	var req dto.CreateProductDTO
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -19,11 +30,11 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 		return
 	}
 
-	err := h.Service.CreateProduct(c.Request.Context(), req)
+	product, err := h.Service.CreateProduct(c.Request.Context(), req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create product", "details": err.Error()})
 		return
 	}
 
-	c.Status(http.StatusCreated)
+	c.JSON(http.StatusCreated, product)
 }

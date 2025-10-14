@@ -7,6 +7,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// AddImage
+// @Summary      Add a new image
+// @Description  Adds a new image and associates it with a product
+// @Tags         images
+// @Accept       json
+// @Produce      json
+// @Param        image  body      dto.ImageUploadDTO  true  "Image data and product ID"
+// @Success      201    {object}  map[string]string "Successfully created"
+// @Failure      400    {object}  map[string]string "Invalid request or validation failed"
+// @Failure      500    {object}  map[string]string "Failed to create image"
+// @Router       /api/v1/images [post]
 func (h *ImageHandler) AddImage(c *gin.Context) {
 	var req dto.ImageUploadDTO
 
