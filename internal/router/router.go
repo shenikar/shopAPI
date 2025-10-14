@@ -7,6 +7,8 @@ import (
 	"shopApi/internal/handler/supplier"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Handlers struct {
@@ -18,6 +20,8 @@ type Handlers struct {
 
 func SetupRouter(h *Handlers) *gin.Engine {
 	r := gin.Default()
+
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	api := r.Group("/api/v1")
 
@@ -33,8 +37,8 @@ func SetupRouter(h *Handlers) *gin.Engine {
 	productGroop := api.Group("/products")
 	{
 		productGroop.POST("", h.ProductHandler.CreateProduct)
-		productGroop.PATCH("/:id/decrease", h.ProductHandler.DecreaseStock)
-		productGroop.GET("", h.ProductHandler.GetAllAvailableProducts)
+		productGroop.PATCH("/:id/decrease-stock", h.ProductHandler.DecreaseStock)
+		productGroop.GET("/available", h.ProductHandler.GetAllAvailableProducts)
 		productGroop.GET("/:id", h.ProductHandler.GetProductByID)
 		productGroop.DELETE("/:id", h.ProductHandler.DeleteProduct)
 	}
