@@ -2,6 +2,9 @@ package service
 
 import (
 	"context"
+	"database/sql"
+	"errors"
+	"shopApi/internal/domain"
 	"shopApi/internal/domain/models"
 	"shopApi/internal/dto"
 	"shopApi/internal/mapper"
@@ -47,6 +50,9 @@ func (s *ImageService) CreateImage(ctx context.Context, dto dto.ImageUploadDTO) 
 func (s *ImageService) UpdateImage(ctx context.Context, id uuid.UUID, newImage []byte) error {
 	_, err := s.repo.GetImageByID(ctx, id)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return domain.ErrNotFound
+		}
 		return err
 	}
 
@@ -54,17 +60,41 @@ func (s *ImageService) UpdateImage(ctx context.Context, id uuid.UUID, newImage [
 }
 
 func (s *ImageService) GetImageByID(ctx context.Context, id uuid.UUID) (*models.Image, error) {
-	return s.repo.GetImageByID(ctx, id)
+	image, err := s.repo.GetImageByID(ctx, id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, domain.ErrNotFound
+		}
+		return nil, err
+	}
+	return image, nil
 }
 
 func (s *ImageService) GetImageByProductID(ctx context.Context, productID uuid.UUID) (*models.Image, error) {
-	return s.repo.GetByProductID(ctx, productID)
+	image, err := s.repo.GetByProductID(ctx, productID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, domain.ErrNotFound
+		}
+		return nil, err
+	}
+	return image, nil
 }
 
 func (s *ImageService) DeleteImage(ctx context.Context, id uuid.UUID) error {
 	err := s.repo.ClearProductImageIDByImageID(ctx, id)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return domain.ErrNotFound
+		}
 		return err
 	}
-	return s.repo.DeleteImage(ctx, id)
+	err = s.repo.DeleteImage(ctx, id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return domain.ErrNotFound
+		}
+		return err
+	}
+	return nil
 }
