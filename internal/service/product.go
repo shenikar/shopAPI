@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"shopApi/internal/domain"
 	"shopApi/internal/dto"
 	"shopApi/internal/mapper"
 	"shopApi/internal/repository"
@@ -21,17 +22,26 @@ func NewProductService(repo *repository.ProductRepository) *ProductService {
 	}
 }
 
-func (s *ProductService) CreateProduct(ctx context.Context, dto dto.CreateProductDTO) error {
+func (s *ProductService) CreateProduct(ctx context.Context, dto dto.CreateProductDTO) (*dto.ProductResponseDTO, error) {
 	product, err := mapper.ToProductEntity(dto)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return s.repo.CreateProduct(ctx, product)
+	product.ID = uuid.New()
+	err = s.repo.CreateProduct(ctx, product)
+	if err != nil {
+		return nil, err
+	}
+	response := mapper.ToProductResponseDTO(product)
+	return &response, nil
 }
 
 func (s *ProductService) GetProductByID(ctx context.Context, id uuid.UUID) (dto.ProductResponseDTO, error) {
 	product, err := s.repo.GetProductByID(ctx, id)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return dto.ProductResponseDTO{}, domain.ErrNotFound
+		}
 		return dto.ProductResponseDTO{}, err
 	}
 	return mapper.ToProductResponseDTO(product), nil
@@ -56,8 +66,8 @@ func (s *ProductService) DeleteProduct(ctx context.Context, id uuid.UUID) error 
 func (s *ProductService) DecreaseStock(ctx context.Context, id uuid.UUID, quantity int) error {
 	err := s.repo.DecreaseStock(ctx, id, quantity)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return errors.New("product not found")
+		if errors.Is(err, sql.ErrNoRows) {
+			return domain.ErrNotFound
 		}
 		return err
 	}
