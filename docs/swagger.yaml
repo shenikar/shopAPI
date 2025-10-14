@@ -1,0 +1,921 @@
+basePath: /api/v1
+definitions:
+  dto.AddressResponseDTO:
+    properties:
+      city:
+        type: string
+      country:
+        type: string
+      id:
+        type: string
+      street:
+        type: string
+    type: object
+  dto.ClientResponseDTO:
+    properties:
+      address:
+        $ref: '#/definitions/dto.AddressResponseDTO'
+      birthday:
+        type: string
+      client_name:
+        type: string
+      client_surname:
+        type: string
+      gender:
+        type: string
+      id:
+        type: string
+      registration_date:
+        type: string
+    type: object
+  dto.CreateAddressDTO:
+    properties:
+      city:
+        type: string
+      country:
+        type: string
+      street:
+        type: string
+    required:
+    - city
+    - country
+    - street
+    type: object
+  dto.CreateClientDTO:
+    properties:
+      address:
+        $ref: '#/definitions/dto.CreateAddressDTO'
+      birthday:
+        type: string
+      client_name:
+        type: string
+      client_surname:
+        type: string
+      gender:
+        enum:
+        - male
+        - female
+        - other
+        type: string
+    required:
+    - address
+    - birthday
+    - client_name
+    - client_surname
+    type: object
+  dto.CreateProductDTO:
+    properties:
+      available_stock:
+        minimum: 0
+        type: integer
+      category:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      supplier_id:
+        type: string
+    required:
+    - available_stock
+    - category
+    - name
+    - price
+    - supplier_id
+    type: object
+  dto.CreateSupplierDTO:
+    properties:
+      address:
+        $ref: '#/definitions/dto.CreateAddressDTO'
+      name:
+        type: string
+      phone_number:
+        type: string
+    required:
+    - address
+    - name
+    - phone_number
+    type: object
+  dto.ImageUploadDTO:
+    properties:
+      image:
+        items:
+          type: integer
+        type: array
+      product_id:
+        type: string
+    required:
+    - image
+    - product_id
+    type: object
+  dto.ProductResponseDTO:
+    properties:
+      available_stock:
+        type: integer
+      category:
+        type: string
+      id:
+        type: string
+      image_id:
+        type: string
+      last_update_date:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      supplier_id:
+        type: string
+    type: object
+  dto.SupplierResponseDTO:
+    properties:
+      address:
+        $ref: '#/definitions/dto.AddressResponseDTO'
+      id:
+        type: string
+      name:
+        type: string
+      phone_number:
+        type: string
+    type: object
+  product.DecreaseStockRequest:
+    properties:
+      quantity:
+        minimum: 1
+        type: integer
+    required:
+    - quantity
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server for a shop API.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Shop API
+  version: "1.0"
+paths:
+  /api/v1/clients:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of all clients with optional pagination
+      parameters:
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved clients
+          schema:
+            items:
+              $ref: '#/definitions/dto.ClientResponseDTO'
+            type: array
+        "400":
+          description: Invalid limit or offset value
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to fetch clients
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all clients
+      tags:
+      - clients
+    post:
+      consumes:
+      - application/json
+      description: Adds a new client to the store
+      parameters:
+      - description: Client info
+        in: body
+        name: client
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateClientDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created
+          schema:
+            $ref: '#/definitions/dto.ClientResponseDTO'
+        "400":
+          description: Invalid request or validation failed
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to create client
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new client
+      tags:
+      - clients
+  /api/v1/clients/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a client from the store by its ID
+      parameters:
+      - description: Client ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid client ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Client not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to delete client
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a client by its ID
+      tags:
+      - clients
+  /api/v1/clients/{id}/address:
+    patch:
+      consumes:
+      - application/json
+      description: Updates the address of a client by their ID
+      parameters:
+      - description: Client ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: New address info
+        in: body
+        name: address
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateAddressDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated client address
+          schema:
+            $ref: '#/definitions/dto.ClientResponseDTO'
+        "400":
+          description: Invalid client ID or request body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Client not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to update client address
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update a client's address
+      tags:
+      - clients
+  /api/v1/clients/search:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of clients matching the given name and surname
+      parameters:
+      - description: Client name
+        in: query
+        name: name
+        required: true
+        type: string
+      - description: Client surname
+        in: query
+        name: surname
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved clients
+          schema:
+            items:
+              $ref: '#/definitions/dto.ClientResponseDTO'
+            type: array
+        "400":
+          description: Missing name or surname parameters
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to fetch clients
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get clients by name and surname
+      tags:
+      - clients
+  /api/v1/images:
+    post:
+      consumes:
+      - application/json
+      description: Adds a new image and associates it with a product
+      parameters:
+      - description: Image data and product ID
+        in: body
+        name: image
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ImageUploadDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid request or validation failed
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to create image
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Add a new image
+      tags:
+      - images
+  /api/v1/images/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes an image from the store by its ID
+      parameters:
+      - description: Image ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid image ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Image not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to delete image
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete an image by its ID
+      tags:
+      - images
+    get:
+      consumes:
+      - application/json
+      description: Retrieves an image from the store by its ID
+      parameters:
+      - description: Image ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: Successfully retrieved image
+          schema:
+            type: string
+        "400":
+          description: Invalid image ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Image not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to get image
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get an image by its ID
+      tags:
+      - images
+    patch:
+      consumes:
+      - application/json
+      description: Updates an image by its ID
+      parameters:
+      - description: Image ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: New image data
+        in: body
+        name: image
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ImageUploadDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid image ID or request body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Image not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to update image
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update an image
+      tags:
+      - images
+  /api/v1/images/product/{product_id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves an image from the store by its product ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: product_id
+        required: true
+        type: string
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: Successfully retrieved image
+          schema:
+            type: string
+        "400":
+          description: Invalid product ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Image not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to get image
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get an image by its product ID
+      tags:
+      - images
+  /api/v1/products:
+    post:
+      consumes:
+      - application/json
+      description: Adds a new product to the store
+      parameters:
+      - description: Product info
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateProductDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created
+          schema:
+            $ref: '#/definitions/dto.ProductResponseDTO'
+        "400":
+          description: Invalid request or validation failed
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to create product
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new product
+      tags:
+      - products
+  /api/v1/products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a product from the store by its ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid product ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Product not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to delete product
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a product by its ID
+      tags:
+      - products
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a product from the store by its ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved product
+          schema:
+            $ref: '#/definitions/dto.ProductResponseDTO'
+        "400":
+          description: Invalid product ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Product not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to get product
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get a product by its ID
+      tags:
+      - products
+  /api/v1/products/{id}/decrease:
+    patch:
+      consumes:
+      - application/json
+      description: Decreases the available stock of a product
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Quantity to decrease
+        in: body
+        name: quantity
+        required: true
+        schema:
+          $ref: '#/definitions/product.DecreaseStockRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated product
+          schema:
+            $ref: '#/definitions/dto.ProductResponseDTO'
+        "400":
+          description: Invalid request or validation failed
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Product not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to decrease stock or fetch updated product
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Decrease product stock
+      tags:
+      - products
+  /api/v1/products/available:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of all products with available stock
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved products
+          schema:
+            items:
+              $ref: '#/definitions/dto.ProductResponseDTO'
+            type: array
+        "500":
+          description: Failed to get products
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all available products
+      tags:
+      - products
+  /api/v1/suppliers:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of all suppliers
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved suppliers
+          schema:
+            items:
+              $ref: '#/definitions/dto.SupplierResponseDTO'
+            type: array
+        "500":
+          description: Failed to fetch suppliers
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all suppliers
+      tags:
+      - suppliers
+    post:
+      consumes:
+      - application/json
+      description: Adds a new supplier to the store
+      parameters:
+      - description: Supplier info
+        in: body
+        name: supplier
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateSupplierDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created
+          schema:
+            $ref: '#/definitions/dto.SupplierResponseDTO'
+        "400":
+          description: Invalid request or validation failed
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to create supplier
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new supplier
+      tags:
+      - suppliers
+  /api/v1/suppliers/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a supplier from the store by its ID
+      parameters:
+      - description: Supplier ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid supplier ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Supplier not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to delete supplier
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a supplier by its ID
+      tags:
+      - suppliers
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a supplier from the store by its ID
+      parameters:
+      - description: Supplier ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved supplier
+          schema:
+            $ref: '#/definitions/dto.SupplierResponseDTO'
+        "400":
+          description: Invalid supplier ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Supplier not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to fetch supplier
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get a supplier by its ID
+      tags:
+      - suppliers
+  /api/v1/suppliers/{id}/address:
+    patch:
+      consumes:
+      - application/json
+      description: Updates the address of a supplier by their ID
+      parameters:
+      - description: Supplier ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: New address info
+        in: body
+        name: address
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateAddressDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated supplier address
+          schema:
+            $ref: '#/definitions/dto.SupplierResponseDTO'
+        "400":
+          description: Invalid supplier ID or request body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Supplier not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to update supplier address
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update a supplier's address
+      tags:
+      - suppliers
+swagger: "2.0"
