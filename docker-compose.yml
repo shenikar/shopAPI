@@ -1,6 +1,26 @@
 version: '3.8'
 
 services:
+  shop-api:
+    build: .
+    container_name: shop-api-app
+    restart: unless-stopped
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_SSLMODE=${DB_SSLMODE}
+      - SERVER_PORT=${SERVER_PORT}
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - shopapi-network
+
   postgres:
     image: postgres:16
     container_name: shopapi-db
@@ -13,6 +33,11 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - shopapi-network
 
