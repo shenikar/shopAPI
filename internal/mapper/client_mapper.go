@@ -3,20 +3,14 @@ package mapper
 import (
 	"shopApi/internal/domain/models"
 	"shopApi/internal/dto"
-	"time"
-
-	"github.com/google/uuid"
 )
 
-func ToClientEntity(dto dto.CreateClientDTO, addressID uuid.UUID) models.Client {
+func ToClientEntity(dto dto.CreateClientDTO) models.Client {
 	return models.Client{
-		ID:               uuid.New(),
-		ClientName:       dto.ClientName,
-		ClientSurname:    dto.ClientSurname,
-		Birthday:         dto.Birthday,
-		Gender:           dto.Gender,
-		RegistrationDate: time.Now(),
-		AddressID:        addressID,
+		ClientName:    dto.ClientName,
+		ClientSurname: dto.ClientSurname,
+		Birthday:      dto.Birthday,
+		Gender:        dto.Gender,
 	}
 }
 
