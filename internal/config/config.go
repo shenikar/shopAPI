@@ -14,7 +14,9 @@ type Config struct {
 	DBUser     string
 	DBPassword string
 	DBName     string
-	DBSSLMode  string
+	DBSSLMode       string
+	ServerPort      string
+	MigrationsPath string
 }
 
 func LoadConfig() *Config {
@@ -24,13 +26,20 @@ func LoadConfig() *Config {
 		log.Println(".env file not found, using system env variables")
 	}
 
+	port := os.Getenv("SERVER_PORT")
+	if port == "" {
+		port = "8080" // Default port
+	}
+
 	return &Config{
 		DBHost:     os.Getenv("DB_HOST"),
 		DBPort:     os.Getenv("DB_PORT"),
 		DBUser:     os.Getenv("DB_USER"),
 		DBPassword: os.Getenv("DB_PASSWORD"),
-		DBName:     os.Getenv("DB_NAME"),
-		DBSSLMode:  os.Getenv("DB_SSLMODE"),
+		DBName:         os.Getenv("DB_NAME"),
+		DBSSLMode:      os.Getenv("DB_SSLMODE"),
+		ServerPort:     port,
+		MigrationsPath: os.Getenv("MIGRATIONS_PATH"),
 	}
 }
 
