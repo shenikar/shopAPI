@@ -13,6 +13,6 @@ type Product struct {
 	Price          float64   `db:"price"`
 	AvailableStock int       `db:"available_stock"`
 	LastUpdateDate time.Time `db:"last_update_date"`
-	SupplierID     int       `db:"supplier_id"`
+	SupplierID     uuid.UUID `db:"supplier_id"`
 	ImageID        uuid.UUID `db:"image_id"`
 }
