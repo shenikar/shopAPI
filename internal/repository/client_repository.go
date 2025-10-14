@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"shopApi/internal/domain/models"
-	"shopApi/internal/dto"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -26,50 +26,20 @@ func NewClientRepository(db *sqlx.DB) *ClientRepository {
 }
 
 // CreateClient создает нового пользователя
-func (r *ClientRepository) CreateClient(ctx context.Context, req dto.CreateClientDTO) (models.Client, models.Address, error) {
-	tx, err := r.db.BeginTx(ctx, nil)
+func (r *ClientRepository) CreateClient(ctx context.Context, client models.Client) (*models.Client, error) {
+	client.ID = uuid.New()
+	client.RegistrationDate = time.Now()
+
+	query := `
+		INSERT INTO client (id, client_name, client_surname, birthday, gender, registration_date, address_id)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
+	`
+	_, err := r.db.ExecContext(ctx, query, client.ID, client.ClientName, client.ClientSurname, client.Birthday, client.Gender, client.RegistrationDate, client.AddressID)
 	if err != nil {
-		return models.Client{}, models.Address{}, err
-	}
-	defer tx.Rollback()
-
-	var addressID uuid.UUID
-	err = tx.QueryRowContext(ctx, `
-		INSERT INTO address (country, city, street)
-		VALUES ($1, $2, $3) RETURNING id
-	`, req.Address.Country, req.Address.City, req.Address.Street).Scan(&addressID)
-	if err != nil {
-		return models.Client{}, models.Address{}, err
+		return nil, err
 	}
 
-	var address models.Address
-	err = tx.QueryRowContext(ctx, `
-	SELECT id, country, city, street
-	FROM address
-	WHERE id = $1
-`, addressID).Scan(&address.ID, &address.Country, &address.City, &address.Street)
-	if err != nil {
-		return models.Client{}, models.Address{}, err
-	}
-
-	var client models.Client
-	clientID := uuid.New()
-	err = tx.QueryRowContext(ctx, `
-	INSERT INTO client (id, client_name, client_surname, birthday, gender, registration_date, address_id)
-	VALUES ($1, $2, $3, $4, $5, NOW(), $6)
-	RETURNING id, client_name, client_surname, birthday, gender, registration_date, address_id
-`, clientID, req.ClientName, req.ClientSurname, req.Birthday, req.Gender, addressID).
-		Scan(&client.ID, &client.ClientName, &client.ClientSurname, &client.Birthday, &client.Gender, &client.RegistrationDate, &client.AddressID)
-
-	if err != nil {
-		return models.Client{}, models.Address{}, err
-	}
-
-	if err := tx.Commit(); err != nil {
-		return models.Client{}, models.Address{}, err
-	}
-
-	return client, address, nil
+	return &client, nil
 }
 
 // DeleteClient удаление пользователя
@@ -194,68 +164,35 @@ func (r *ClientRepository) FindByNameSurname(ctx context.Context, name, surname 
 	return results, nil
 }
 
-// UpdateAddress обновление адреса пользователя
-func (r *ClientRepository) UpdateAddress(ctx context.Context, ID uuid.UUID, req dto.CreateAddressDTO) (models.Client, models.Address, error) {
-	tx, err := r.db.BeginTx(ctx, nil)
+
+
+// GetClientByID получение пользователя по ID
+func (r *ClientRepository) GetClientByID(ctx context.Context, id uuid.UUID) (*ClientWithAddress, error) {
+	query := `
+	SELECT 
+		c.id, c.client_name, c.client_surname, c.birthday, c.gender, c.registration_date, c.address_id,
+		a.id, a.country, a.city, a.street
+	FROM client c
+	JOIN address a ON c.address_id = a.id
+	WHERE c.id = $1
+	`
+	var result ClientWithAddress
+	row := r.db.QueryRowContext(ctx, query, id)
+	err := row.Scan(
+		&result.Client.ID,
+		&result.Client.ClientName,
+		&result.Client.ClientSurname,
+		&result.Client.Birthday,
+		&result.Client.Gender,
+		&result.Client.RegistrationDate,
+		&result.Client.AddressID,
+		&result.Address.ID,
+		&result.Address.Country,
+		&result.Address.City,
+		&result.Address.Street,
+	)
 	if err != nil {
-		return models.Client{}, models.Address{}, err
+		return nil, err
 	}
-	defer tx.Rollback()
-
-	var addressID uuid.UUID
-	err = tx.QueryRowContext(ctx, `
-		SELECT address_id FROM client WHERE id = $1
-	`, ID).Scan(&addressID)
-	if err != nil {
-		return models.Client{}, models.Address{}, err
-	}
-
-	_, err = tx.ExecContext(ctx, `
-		UPDATE address SET country = $1, city = $2, street = $3 WHERE id = $4
-	`, req.Country, req.City, req.Street, addressID)
-	if err != nil {
-		return models.Client{}, models.Address{}, err
-	}
-
-	var client models.Client
-	err = tx.QueryRowContext(ctx, `
-		SELECT id, client_name, client_surname, birthday, gender, registration_date, address_id
-		FROM client WHERE id = $1
-	`, ID).Scan(&client.ID, &client.ClientName, &client.ClientSurname, &client.Birthday, &client.Gender, &client.RegistrationDate, &client.AddressID)
-	if err != nil {
-		return models.Client{}, models.Address{}, err
-	}
-
-	var address models.Address
-	err = tx.QueryRowContext(ctx, `
-		SELECT id, country, city, street FROM address WHERE id = $1
-	`, addressID).Scan(&address.ID, &address.Country, &address.City, &address.Street)
-	if err != nil {
-		return models.Client{}, models.Address{}, err
-	}
-
-	if err := tx.Commit(); err != nil {
-		return models.Client{}, models.Address{}, err
-	}
-
-	return client, address, nil
-}
-
-func (r *ClientRepository) CreateAddress(ctx context.Context, address models.Address) (uuid.UUID, error) {
-	address.ID = uuid.New()
-
-	query := `INSERT INTO address (id, country, city, street) VALUES ($1, $2, $3, $4)`
-	_, err := r.db.ExecContext(ctx, query, address.ID, address.Country, address.City, address.Street)
-	if err != nil {
-		return uuid.Nil, err
-	}
-
-	return address.ID, nil
-}
-
-func (r *ClientRepository) GetAddressByID(ctx context.Context, id uuid.UUID) (models.Address, error) {
-	var address models.Address
-	query := `SELECT id, country, city, street FROM address WHERE id = $1`
-	err := r.db.GetContext(ctx, &address, query, id)
-	return address, err
+	return &result, nil
 }

@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"database/sql"
 	"shopApi/internal/domain/models"
 
 	"github.com/google/uuid"
@@ -25,20 +24,6 @@ func (r *SupplierRepository) CreateSupplier(ctx context.Context, supplier models
 			 VALUES (:id, :name, :address_id, :phone_number)`
 	_, err := r.db.NamedExecContext(ctx, query, supplier)
 	return err
-}
-
-// UpdateAddress обновляет адрес поставщика
-func (r *SupplierRepository) UpdateAddress(ctx context.Context, id uuid.UUID, addressID int) error {
-	query := `UPDATE supplier SET address_id = $1 WHERE id = $2`
-	res, err := r.db.ExecContext(ctx, query, addressID, id)
-	if err != nil {
-		return err
-	}
-	rows, _ := res.RowsAffected()
-	if rows == 0 {
-		return sql.ErrNoRows
-	}
-	return nil
 }
 
 // DeleteSupplier удаление поставщика по ID
