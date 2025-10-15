@@ -13,19 +13,30 @@ func ToProductEntity(dto dto.CreateProductDTO) (models.Product, error) {
 	if err != nil {
 		return models.Product{}, err
 	}
+
+	var imageID *uuid.UUID
+	if dto.ImageID != nil {
+		parsedUUID, err := uuid.Parse(*dto.ImageID)
+		if err != nil {
+			return models.Product{}, err
+		}
+		imageID = &parsedUUID
+	}
+
 	return models.Product{
 		Name:           dto.Name,
 		Category:       dto.Category,
 		Price:          dto.Price,
 		AvailableStock: dto.AvailableStock,
 		SupplierID:     supplierID,
+		ImageID:        imageID,
 		LastUpdateDate: time.Now(),
 	}, nil
 }
 
 func ToProductResponseDTO(product models.Product) dto.ProductResponseDTO {
-	imageID := ""
-	if product.ImageID != uuid.Nil {
+	var imageID string
+	if product.ImageID != nil {
 		imageID = product.ImageID.String()
 	}
 
