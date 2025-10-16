@@ -13,7 +13,7 @@
 
 ## Технологический стек
 
-- **Язык:** Go
+- **Язык:** Go 1.24
 - **Веб-фреймворк:** Gin
 - **База данных:** PostgreSQL
 - **Контейнеризация:** Docker, Docker Compose
@@ -111,6 +111,8 @@ swag init -g cmd/shopApi/main.go
 ├── Dockerfile              # Dockerfile для сборки Go-приложения
 ├── docker-compose.yml      # Файл Docker Compose для запуска проекта
 └── README.md               # Этот файл
+
+```
 
 ## Postman-коллекция
 
