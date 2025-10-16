@@ -7,8 +7,8 @@ type CreateSupplierDTO struct {
 }
 
 type SupplierResponseDTO struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
+	ID          string             `json:"id"`
+	Name        string             `json:"name"`
 	Address     AddressResponseDTO `json:"address"`
 	PhoneNumber string             `json:"phone_number"`
 }

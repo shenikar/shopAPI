@@ -2,8 +2,9 @@ package service
 
 import (
 	"context"
-	"shopApi/internal/domain/models"
-	"shopApi/internal/repository"
+
+	"github.com/shenikar/shopAPI/internal/domain/models"
+	"github.com/shenikar/shopAPI/internal/repository"
 
 	"github.com/google/uuid"
 )

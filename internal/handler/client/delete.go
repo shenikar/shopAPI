@@ -3,7 +3,8 @@ package client
 import (
 	"errors"
 	"net/http"
-	"shopApi/internal/domain"
+
+	"github.com/shenikar/shopAPI/internal/domain"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -21,7 +22,7 @@ import (
 // @Failure      404  {object}  map[string]string "Client not found"
 // @Failure      500  {object}  map[string]string "Failed to delete client"
 // @Router       /api/v1/clients/{id} [delete]
-func (h *ClientHandler) DeleteClient(c *gin.Context) {
+func (h *Handler) DeleteClient(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := uuid.Parse(idStr)
 	if err != nil {

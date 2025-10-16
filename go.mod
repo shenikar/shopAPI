@@ -1,4 +1,4 @@
-module shopApi
+module github.com/shenikar/shopAPI
 
 go 1.24.4
 

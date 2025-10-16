@@ -1,10 +1,10 @@
 package router
 
 import (
-	"shopApi/internal/handler/client"
-	"shopApi/internal/handler/image"
-	"shopApi/internal/handler/product"
-	"shopApi/internal/handler/supplier"
+	"github.com/shenikar/shopAPI/internal/handler/client"
+	"github.com/shenikar/shopAPI/internal/handler/image"
+	"github.com/shenikar/shopAPI/internal/handler/product"
+	"github.com/shenikar/shopAPI/internal/handler/supplier"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -12,10 +12,10 @@ import (
 )
 
 type Handlers struct {
-	ClientHandler   *client.ClientHandler
-	ProductHandler  *product.ProductHandler
-	SupplierHandler *supplier.SupplierHandler
-	ImageHandler    *image.ImageHandler
+	ClientHandler   *client.Handler
+	ProductHandler  *product.Handler
+	SupplierHandler *supplier.Handler
+	ImageHandler    *image.Handler
 }
 
 func SetupRouter(h *Handlers) *gin.Engine {

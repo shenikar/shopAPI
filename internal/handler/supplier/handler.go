@@ -1,18 +1,18 @@
 package supplier
 
 import (
-	"shopApi/internal/service"
+	"github.com/shenikar/shopAPI/internal/service"
 
 	"github.com/go-playground/validator/v10"
 )
 
-type SupplierHandler struct {
+type Handler struct {
 	Service   *service.SupplierService
 	Validator *validator.Validate
 }
 
-func NewSupplierHandler(service *service.SupplierService, validator *validator.Validate) *SupplierHandler {
-	return &SupplierHandler{
+func NewSupplierHandler(service *service.SupplierService, validator *validator.Validate) *Handler {
+	return &Handler{
 		Service:   service,
 		Validator: validator,
 	}

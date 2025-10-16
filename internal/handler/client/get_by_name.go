@@ -18,7 +18,7 @@ import (
 // @Failure      400      {object}  map[string]string "Missing name or surname parameters"
 // @Failure      500      {object}  map[string]string "Failed to fetch clients"
 // @Router       /api/v1/clients/search [get]
-func (h *ClientHandler) GetClientByNameSurname(c *gin.Context) {
+func (h *Handler) GetClientByNameSurname(c *gin.Context) {
 	name := c.Query("name")
 	surname := c.Query("surname")
 

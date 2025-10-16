@@ -4,10 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"shopApi/internal/domain"
-	"shopApi/internal/dto"
-	"shopApi/internal/mapper"
-	"shopApi/internal/repository"
+
+	"github.com/shenikar/shopAPI/internal/domain"
+	"github.com/shenikar/shopAPI/internal/dto"
+	"github.com/shenikar/shopAPI/internal/mapper"
+	"github.com/shenikar/shopAPI/internal/repository"
 
 	"github.com/google/uuid"
 )

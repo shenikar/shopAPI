@@ -3,8 +3,9 @@ package repository
 import (
 	"context"
 	"fmt"
-	"shopApi/internal/domain/models"
 	"time"
+
+	"github.com/shenikar/shopAPI/internal/domain/models"
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -163,8 +164,6 @@ func (r *ClientRepository) FindByNameSurname(ctx context.Context, name, surname 
 
 	return results, nil
 }
-
-
 
 // GetClientByID получение пользователя по ID
 func (r *ClientRepository) GetClientByID(ctx context.Context, id uuid.UUID) (*ClientWithAddress, error) {

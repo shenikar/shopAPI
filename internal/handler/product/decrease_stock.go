@@ -3,7 +3,8 @@ package product
 import (
 	"errors"
 	"net/http"
-	"shopApi/internal/domain"
+
+	"github.com/shenikar/shopAPI/internal/domain"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -26,7 +27,7 @@ type DecreaseStockRequest struct {
 // @Failure      404  {object}  map[string]string "Product not found"
 // @Failure      500  {object}  map[string]string "Failed to decrease stock or fetch updated product"
 // @Router       /api/v1/products/{id}/decrease [patch]
-func (h *ProductHandler) DecreaseStock(c *gin.Context) {
+func (h *Handler) DecreaseStock(c *gin.Context) {
 	productID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid product ID"})

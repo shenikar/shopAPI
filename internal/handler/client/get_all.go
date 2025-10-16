@@ -19,7 +19,7 @@ import (
 // @Failure      400  {object}  map[string]string "Invalid limit or offset value"
 // @Failure      500  {object}  map[string]string "Failed to fetch clients"
 // @Router       /api/v1/clients [get]
-func (h *ClientHandler) GetAllClients(c *gin.Context) {
+func (h *Handler) GetAllClients(c *gin.Context) {
 	limitStr := c.Query("limit")
 	offsetStr := c.Query("offset")
 	var limit, offset *int

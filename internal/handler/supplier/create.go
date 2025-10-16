@@ -2,7 +2,8 @@ package supplier
 
 import (
 	"net/http"
-	"shopApi/internal/dto"
+
+	"github.com/shenikar/shopAPI/internal/dto"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,7 +19,7 @@ import (
 // @Failure      400      {object}  map[string]string "Invalid request or validation failed"
 // @Failure      500      {object}  map[string]string "Failed to create supplier"
 // @Router       /api/v1/suppliers [post]
-func (h *SupplierHandler) CreateSupplier(c *gin.Context) {
+func (h *Handler) CreateSupplier(c *gin.Context) {
 	var req dto.CreateSupplierDTO
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})

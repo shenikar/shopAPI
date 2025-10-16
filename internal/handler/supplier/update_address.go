@@ -3,8 +3,9 @@ package supplier
 import (
 	"errors"
 	"net/http"
-	"shopApi/internal/domain"
-	"shopApi/internal/dto"
+
+	"github.com/shenikar/shopAPI/internal/domain"
+	"github.com/shenikar/shopAPI/internal/dto"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -23,7 +24,7 @@ import (
 // @Failure      404  {object}  map[string]string "Supplier not found"
 // @Failure      500  {object}  map[string]string "Failed to update supplier address"
 // @Router       /api/v1/suppliers/{id}/address [patch]
-func (h *SupplierHandler) UpdateAddressSupplier(c *gin.Context) {
+func (h *Handler) UpdateAddressSupplier(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid supplier ID"})

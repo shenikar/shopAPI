@@ -3,7 +3,8 @@ package product
 import (
 	"errors"
 	"net/http"
-	"shopApi/internal/domain"
+
+	"github.com/shenikar/shopAPI/internal/domain"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -21,7 +22,7 @@ import (
 // @Failure      404  {object}  map[string]string "Product not found"
 // @Failure      500  {object}  map[string]string "Failed to get product"
 // @Router       /api/v1/products/{id} [get]
-func (h *ProductHandler) GetProductByID(c *gin.Context) {
+func (h *Handler) GetProductByID(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := uuid.Parse(idStr)
 	if err != nil {

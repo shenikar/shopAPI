@@ -3,7 +3,8 @@ package supplier
 import (
 	"errors"
 	"net/http"
-	"shopApi/internal/domain"
+
+	"github.com/shenikar/shopAPI/internal/domain"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -21,7 +22,7 @@ import (
 // @Failure      404  {object}  map[string]string "Supplier not found"
 // @Failure      500  {object}  map[string]string "Failed to delete supplier"
 // @Router       /api/v1/suppliers/{id} [delete]
-func (h *SupplierHandler) DeleteSupplier(c *gin.Context) {
+func (h *Handler) DeleteSupplier(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := uuid.Parse(idParam)
 	if err != nil {

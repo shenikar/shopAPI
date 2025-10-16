@@ -3,8 +3,9 @@ package image
 import (
 	"errors"
 	"net/http"
-	"shopApi/internal/domain"
-	"shopApi/internal/dto"
+
+	"github.com/shenikar/shopAPI/internal/domain"
+	"github.com/shenikar/shopAPI/internal/dto"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -23,7 +24,7 @@ import (
 // @Failure      404    {object}  map[string]string "Image not found"
 // @Failure      500    {object}  map[string]string "Failed to update image"
 // @Router       /api/v1/images/{id} [patch]
-func (h *ImageHandler) UpdateImage(c *gin.Context) {
+func (h *Handler) UpdateImage(c *gin.Context) {
 	imageID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid image id"})

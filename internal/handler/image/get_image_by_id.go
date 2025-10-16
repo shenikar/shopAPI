@@ -3,7 +3,8 @@ package image
 import (
 	"errors"
 	"net/http"
-	"shopApi/internal/domain"
+
+	"github.com/shenikar/shopAPI/internal/domain"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -21,7 +22,7 @@ import (
 // @Failure      404  {object}  map[string]string "Image not found"
 // @Failure      500  {object}  map[string]string "Failed to get image"
 // @Router       /api/v1/images/{id} [get]
-func (h *ImageHandler) GetImageByID(c *gin.Context) {
+func (h *Handler) GetImageByID(c *gin.Context) {
 	idStr := c.Param("id")
 	imageID, err := uuid.Parse(idStr)
 	if err != nil {

@@ -3,8 +3,9 @@ package client
 import (
 	"errors"
 	"net/http"
-	"shopApi/internal/domain"
-	"shopApi/internal/dto"
+
+	"github.com/shenikar/shopAPI/internal/domain"
+	"github.com/shenikar/shopAPI/internal/dto"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -23,7 +24,7 @@ import (
 // @Failure      404  {object}  map[string]string "Client not found"
 // @Failure      500  {object}  map[string]string "Failed to update client address"
 // @Router       /api/v1/clients/{id}/address [patch]
-func (h *ClientHandler) UpdateAddress(c *gin.Context) {
+func (h *Handler) UpdateAddress(c *gin.Context) {
 	idStr := c.Param("id")
 	clientID, err := uuid.Parse(idStr)
 	if err != nil {

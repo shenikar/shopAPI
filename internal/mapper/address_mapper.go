@@ -1,8 +1,8 @@
 package mapper
 
 import (
-	"shopApi/internal/domain/models"
-	"shopApi/internal/dto"
+	"github.com/shenikar/shopAPI/internal/domain/models"
+	"github.com/shenikar/shopAPI/internal/dto"
 
 	"github.com/google/uuid"
 )

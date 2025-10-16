@@ -2,7 +2,8 @@ package repository
 
 import (
 	"context"
-	"shopApi/internal/domain/models"
+
+	"github.com/shenikar/shopAPI/internal/domain/models"
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"

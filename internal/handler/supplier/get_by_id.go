@@ -3,7 +3,8 @@ package supplier
 import (
 	"errors"
 	"net/http"
-	"shopApi/internal/domain"
+
+	"github.com/shenikar/shopAPI/internal/domain"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -21,7 +22,7 @@ import (
 // @Failure      404  {object}  map[string]string "Supplier not found"
 // @Failure      500  {object}  map[string]string "Failed to fetch supplier"
 // @Router       /api/v1/suppliers/{id} [get]
-func (h *SupplierHandler) GetSupplierByID(c *gin.Context) {
+func (h *Handler) GetSupplierByID(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid supplier ID"})

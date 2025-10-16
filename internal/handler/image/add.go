@@ -2,7 +2,8 @@ package image
 
 import (
 	"net/http"
-	"shopApi/internal/dto"
+
+	"github.com/shenikar/shopAPI/internal/dto"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,7 +19,7 @@ import (
 // @Failure      400    {object}  map[string]string "Invalid request or validation failed"
 // @Failure      500    {object}  map[string]string "Failed to create image"
 // @Router       /api/v1/images [post]
-func (h *ImageHandler) AddImage(c *gin.Context) {
+func (h *Handler) AddImage(c *gin.Context) {
 	var req dto.ImageUploadDTO
 
 	if err := c.ShouldBindJSON(&req); err != nil {

@@ -3,7 +3,8 @@ package image
 import (
 	"errors"
 	"net/http"
-	"shopApi/internal/domain"
+
+	"github.com/shenikar/shopAPI/internal/domain"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -21,7 +22,7 @@ import (
 // @Failure      404    {object}  map[string]string "Image not found"
 // @Failure      500    {object}  map[string]string "Failed to delete image"
 // @Router       /api/v1/images/{id} [delete]
-func (h *ImageHandler) DeleteImage(c *gin.Context) {
+func (h *Handler) DeleteImage(c *gin.Context) {
 	imageID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid image id"})

@@ -1,18 +1,18 @@
 package image
 
 import (
-	"shopApi/internal/service"
+	"github.com/shenikar/shopAPI/internal/service"
 
 	"github.com/go-playground/validator/v10"
 )
 
-type ImageHandler struct {
+type Handler struct {
 	Service   *service.ImageService
 	Validator *validator.Validate
 }
 
-func NewImageHandler(service *service.ImageService, validator *validator.Validate) *ImageHandler {
-	return &ImageHandler{
+func NewImageHandler(service *service.ImageService, validator *validator.Validate) *Handler {
+	return &Handler{
 		Service:   service,
 		Validator: validator,
 	}
