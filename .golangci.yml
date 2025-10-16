@@ -1,0 +1,51 @@
+run:
+  # Таймаут для одного запуска линтера, по умолчанию 1 минута.
+  timeout: 5m
+  # Количество потоков для параллельного запуска линтеров.
+  # По умолчанию равно количеству CPU.
+  concurrency: 4
+
+linters:
+  # Отключаем все линтеры по умолчанию и включаем только нужные.
+  disable-all: true
+  enable:
+    - govet
+    - errcheck
+    - staticcheck
+    - unused
+    - goimports
+    - revive
+    - ineffassign
+    - typecheck
+    - gosimple
+    - gofmt
+    - stylecheck
+    - unconvert
+    - whitespace
+
+linters-settings:
+  goimports:
+    # Разделять импорты на локальные и внешние.
+    local-prefixes: shopApi
+  stylecheck:
+    # Проверять, что комментарии к публичным функциям и типам начинаются с их имени.
+    checks: ["all", "-ST1000", "-ST1020", "-ST1021", "-ST1022"]
+
+issues:
+  # Максимальное количество проблем на один линтер.
+  # 0 = без ограничений.
+  max-issues-per-linter: 0
+  # Максимальное количество проблем с одинаковым текстом.
+  # 0 = без ограничений.
+  max-same-issues: 0
+  # Исключаем некоторые проверки из определенных файлов.
+  exclude-rules:
+    # Исключаем проверку ошибок в тестовых файлах, где это часто бывает избыточно.
+    - path: _test\.go
+      linters:
+        - errcheck
+    # Swagger-файлы часто содержат сгенерированный код, который не нужно линтить.
+    - path: docs/
+      text: "don't use an underscore in package name"
+      linters:
+        - revive
